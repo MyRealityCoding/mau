@@ -1,6 +1,8 @@
 var Assets = function() {
 
 	this.images = {};
+	this.veloX = 0;
+	this.veloY = 0;
 
 	this.image = function(src) {
 		src = "img/" + src;
@@ -109,17 +111,28 @@ $(document).ready(function() {
 
 		game.init();
 		var assets = new Assets();
-		var cat = new Entity();
-		cat.x = 100;
-		cat.y = 200;
-		cat.sprite = assets.image("mouse.png");
-		game.addEntity(cat);
+		var mouse = new Entity();
+		mouse.x = 100;
+		mouse.y = 200;
+		mouse.sprite = assets.image("mouse.png");
+		game.addEntity(mouse);
 
-		cat.update = function(dt) {
-			cat.x += ((game.mouseX - cat.x) * 8.0) * dt;
-			cat.y += ((game.mouseY - cat.y) * 8.0) * dt;
+		mouse.update = function(dt) {
+			this.x += (game.mouseX - mouse.x) * dt;
+			this.y += (game.mouseY - mouse.y) * dt;
 		};
 
+		// Add cat
+		var cat1 = new Entity();
+		cat1.x = Math.random() * game.width();
+		cat1.y = Math.random() * game.height();
+		cat1.sprite = assets.image("mouse.png");
+		cat1.update = function(dt) {
+			this.x += Math.random() < 0.5 ? Math.random() : -Math.random();
+			this.y += Math.random() < 0.5 ? Math.random() : -Math.random();
+		};
+		game.addEntity(cat1);
+	
 		var FPS = 60;
 
 		setInterval(function() {
