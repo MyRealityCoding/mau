@@ -1,38 +1,38 @@
-var Assets = function() {
+var Assets = {
 
-	this.images = {};
-	this.veloX = 0;
-	this.veloY = 0;
+	images: {},
 
-	this.image = function(src) {
+	image: function(src) {
 		src = "img/" + src;
 		if (!this.images[src]) {
 			this.images[src] = new Image();
 			this.images[src].src = src;
 		}
 		return this.images[src];
-	};
+	}
 };
 
-var Entity = function() {
+var Entity = {
 
-	this.x = 0;
-	this.y = 0;
-	this.sprite = null;
+	x: 0,
+	y: 0,
+	w:10,
+	h:10,
+	sprite: null,
 
-	this.update = function(dt) {
+	update: function(dt) {
 		
-	};
+	},
 
-	this.draw = function(context) {
+	draw: function(context) {
 		if (this.sprite != null) {
-			context.drawImage(this.sprite, this.x, this.y);
+			context.drawImage(this.sprite, this.x, this.y, this.w, this.h);
 		}
-	};
+	},
 
-	this.resize = function(w,h) {
+	resize: function(w,h) {
 
-	};
+	}
 };
 
 var Game = {
@@ -106,14 +106,16 @@ var Game = {
 };
 
 var game = Object.create(Game);
+var assets = Object.create(Assets);
 
 $(document).ready(function() {
 
 		game.init();
-		var assets = new Assets();
-		var mouse = new Entity();
+		var mouse = Object.create(Entity);
 		mouse.x = 100;
 		mouse.y = 200;
+		mouse.w = 50;
+		mouse.h = 50;
 		mouse.sprite = assets.image("mouse.png");
 		game.addEntity(mouse);
 
@@ -123,7 +125,7 @@ $(document).ready(function() {
 		};
 
 		// Add cat
-		var cat1 = new Entity();
+		var cat1 = Object.create(Entity);
 		cat1.x = Math.random() * game.width();
 		cat1.y = Math.random() * game.height();
 		cat1.sprite = assets.image("mouse.png");
