@@ -150,13 +150,31 @@ $(document).ready(function() {
 			}
 		}
 
+		var TrackingBehavior = {
+
+			target : null,
+
+			update: function(entity,dt) {
+				if (this.target != null) {
+					entity.x += target.x - entity.x;
+					entity.y += target.y - entity.y;
+				}
+			}
+		}
+
 		function addRandomCat(game,type) {
 			var cat = Object.create(Entity);
 			cat.type = type;
 			cat.x = Math.random() * game.width();
 			cat.y = Math.random() * game.height();
-			cat.sprite = game.assets.image("mouse.png");
-			cat.behavior = Object.create(RandomBehavior);
+
+			if (type === EntityType.GoodCat) {
+				cat.sprite = game.assets.image("mouse.png");
+				cat.behavior = Object.create(RandomBehavior);
+			} else if (type == EntityType.BadCat) {
+				cat.sprite = game.assets.image("mouse.png");
+				cat.behavior = Object.create(TrackingBehavior);
+			}
 			game.addEntity(cat);
 			return cat;
 		}
