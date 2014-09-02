@@ -26,6 +26,13 @@ var Assets = {
 	}
 };
 
+var EntityType = {
+	None: 0,
+	Mouse: 1,
+	BadCat: 2,
+	GoodCat: 3
+};
+
 var Entity = {
 
 	x: 0,
@@ -33,9 +40,11 @@ var Entity = {
 	w:10,
 	h:10,
 	sprite: null,
+	type: EntityType.None,
+	behavior: null,
 
 	update: function(dt) {
-		
+
 	},
 
 	draw: function(context) {
@@ -102,6 +111,10 @@ var Game = {
 	    this.then = this.now;
 		for (var i = 0; i < this.entities.length; ++i) {
 			var e = this.entities[i];
+
+			if (e.behavior != null) {
+				e.behavior.update(e,this.delta);
+			}
 			e.update(this.delta);
 			this.collisions.check(e,this.entities);
 		}
@@ -130,6 +143,24 @@ var game = Object.create(Game);
 
 $(document).ready(function() {
 
+		var RandomBehavior = {
+			update: function(entity,dt) {
+				entity.x += Math.random() < 0.5 ? Math.random() : -Math.random();
+				entity.y += Math.random() < 0.5 ? Math.random() : -Math.random();				
+			}
+		}
+
+		function addRandomCat(game,type) {
+			var cat = Object.create(Entity);
+			cat.type = type;
+			cat.x = Math.random() * game.width();
+			cat.y = Math.random() * game.height();
+			cat.sprite = game.assets.image("mouse.png");
+			cat.behavior = Object.create(RandomBehavior);
+			game.addEntity(cat);
+			return cat;
+		}
+
 		game.init();
 		var mouse = Object.create(Entity);
 		mouse.x = 100;
@@ -144,16 +175,10 @@ $(document).ready(function() {
 			this.y += (game.mouseY - mouse.y) * dt;
 		};
 
-		// Add cat
-		var cat1 = Object.create(Entity);
-		cat1.x = Math.random() * game.width();
-		cat1.y = Math.random() * game.height();
-		cat1.sprite = game.assets.image("mouse.png");
-		cat1.update = function(dt) {
-			this.x += Math.random() < 0.5 ? Math.random() : -Math.random();
-			this.y += Math.random() < 0.5 ? Math.random() : -Math.random();
-		};
-		game.addEntity(cat1);
+		addRandomCat(game, EntityType.BadCat);
+		addRandomCat(game, EntityType.BadCat);
+		addRandomCat(game, EntityType.BadCat);
+		addRandomCat(game, EntityType.BadCat);
 
 		game.collisions.on = function(entityA,entityB) {
 			console.log(entityA + " collides with " + entityB);
