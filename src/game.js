@@ -1,3 +1,17 @@
+var Collisions = {
+	on: function(entitityA,entityB) {
+
+	},
+	check: function(entityA,entities) {
+		for (var i = 0; i < entities.length; ++i) {
+			var entityB = entities[i];
+			if (entityA !== entityB && entityA.collides(entityB)) {
+				this.on(entityA,entityB);
+			}
+		}
+	}
+};
+
 var Assets = {
 
 	images: {},
@@ -32,11 +46,17 @@ var Entity = {
 
 	resize: function(w,h) {
 
+	},
+	collides: function(other) {
+		return (this.x >= other.x && this.y >= other.y
+		&& this.x <= other.x + other.w && this.y <= other.y + other.h);
 	}
 };
 
 var Game = {
 
+	assets: Object.create(Assets),
+	collisions: Object.create(Collisions),
 	init: function() {
 		this.now = Date.now();
 	    this.delta = 0;
@@ -83,6 +103,7 @@ var Game = {
 		for (var i = 0; i < this.entities.length; ++i) {
 			var e = this.entities[i];
 			e.update(this.delta);
+			this.collisions.check(e,this.entities);
 		}
 	},
 	draw: function() {
@@ -106,7 +127,6 @@ var Game = {
 };
 
 var game = Object.create(Game);
-var assets = Object.create(Assets);
 
 $(document).ready(function() {
 
@@ -116,7 +136,7 @@ $(document).ready(function() {
 		mouse.y = 200;
 		mouse.w = 50;
 		mouse.h = 50;
-		mouse.sprite = assets.image("mouse.png");
+		mouse.sprite = game.assets.image("mouse.png");
 		game.addEntity(mouse);
 
 		mouse.update = function(dt) {
@@ -128,12 +148,16 @@ $(document).ready(function() {
 		var cat1 = Object.create(Entity);
 		cat1.x = Math.random() * game.width();
 		cat1.y = Math.random() * game.height();
-		cat1.sprite = assets.image("mouse.png");
+		cat1.sprite = game.assets.image("mouse.png");
 		cat1.update = function(dt) {
 			this.x += Math.random() < 0.5 ? Math.random() : -Math.random();
 			this.y += Math.random() < 0.5 ? Math.random() : -Math.random();
 		};
 		game.addEntity(cat1);
+
+		game.collisions.on = function(entityA,entityB) {
+			console.log(entityA + " collides with " + entityB);
+		};
 	
 		var FPS = 60;
 
