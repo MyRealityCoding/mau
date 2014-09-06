@@ -37,8 +37,8 @@ var Entity = {
 
 	x: 0,
 	y: 0,
-	w:10,
-	h:10,
+	w:160,
+	h:160,
 	sprite: null,
 	type: EntityType.None,
 	behavior: null,
@@ -162,6 +162,24 @@ $(document).ready(function() {
 			}
 		}
 
+		game.collisions.on = function(entityA,entityB) {
+			// A: BadCat and B: GoodCat -> GAME OVER!
+			if (entityA.type === EntityType.BadCat &&
+				entityB.type === EntityType.GoodCat) {
+				// TODO: GAME OVER HERE!
+			} 
+			// A: BadCat and B: Mouse -> GAME OVER!
+			else if (entityA.type === EntityType.BadCat &&
+				entityB.type === EntityType.Mouse) {
+				// TODO: GAME OVER HERE!
+			} 
+			// A: Mouse and B: GoodCat -> WON!
+			else if (entityA.type === EntityType.Mouse &&
+				entityB.type === EntityType.GoodCat) {
+				// TODO: WON HERE!
+			}
+		};
+
 		function addRandomCat(game,type) {
 			var cat = Object.create(Entity);
 			cat.type = type;
@@ -169,10 +187,10 @@ $(document).ready(function() {
 			cat.y = Math.random() * game.height();
 
 			if (type === EntityType.GoodCat) {
-				cat.sprite = game.assets.image("mouse.png");
+				cat.sprite = game.assets.image("cat.png");
 				cat.behavior = Object.create(RandomBehavior);
 			} else if (type == EntityType.BadCat) {
-				cat.sprite = game.assets.image("mouse.png");
+				cat.sprite = game.assets.image("cat.png");
 				cat.behavior = Object.create(TrackingBehavior);
 			}
 			game.addEntity(cat);
@@ -181,10 +199,11 @@ $(document).ready(function() {
 
 		game.init();
 		var mouse = Object.create(Entity);
+		mouse.type = EntityType.Mouse;
 		mouse.x = 100;
 		mouse.y = 200;
-		mouse.w = 50;
-		mouse.h = 50;
+		mouse.w = 80;
+		mouse.h = 80;
 		mouse.sprite = game.assets.image("mouse.png");
 		game.addEntity(mouse);
 
@@ -197,10 +216,6 @@ $(document).ready(function() {
 		addRandomCat(game, EntityType.BadCat);
 		addRandomCat(game, EntityType.BadCat);
 		addRandomCat(game, EntityType.BadCat);
-
-		game.collisions.on = function(entityA,entityB) {
-			console.log(entityA + " collides with " + entityB);
-		};
 	
 		var FPS = 60;
 
