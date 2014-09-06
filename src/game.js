@@ -144,9 +144,37 @@ var game = Object.create(Game);
 $(document).ready(function() {
 
 		var RandomBehavior = {
+
+			veloX : 0.0,
+			veloY : 0.0,
+
 			update: function(entity,dt) {
-				entity.x += Math.random() < 0.5 ? Math.random() : -Math.random();
-				entity.y += Math.random() < 0.5 ? Math.random() : -Math.random();				
+				this.veloX += (Math.random() < 0.5 ? Math.random() : -Math.random()) * 80.0;
+				this.veloY += (Math.random() < 0.5 ? Math.random() : -Math.random()) * 80.0;
+				entity.x += this.veloX * dt;
+				entity.y += this.veloY * dt;
+
+				// Prevent entity from leaving our world
+
+				if (entity.x < 0) {
+					entity.x = 0;
+					this.veloX = 0;
+				}
+
+				if (entity.y < 0) {
+					entity.y = 0;
+					this.veloY = 0;
+				}
+
+				if (entity.x + entity.w > game.width()) {
+					entity.x = game.width() - entity.w;
+					this.veloX = 0;
+				}
+
+				if (entity.y + entity.h > game.height()) {
+					entity.y = game.height() - entity.h;
+					this.veloY = 0;
+				}
 			}
 		}
 
@@ -156,8 +184,8 @@ $(document).ready(function() {
 
 			update: function(entity,dt) {
 				if (this.target != null) {
-					entity.x += target.x - entity.x;
-					entity.y += target.y - entity.y;
+					entity.x += (this.target.x - entity.x) * dt * 0.5;
+					entity.y += (this.target.y - entity.y) * dt * 0.5;
 				}
 			}
 		}
@@ -187,10 +215,10 @@ $(document).ready(function() {
 			cat.y = Math.random() * game.height();
 
 			if (type === EntityType.GoodCat) {
-				cat.sprite = game.assets.image("cat.png");
+				cat.sprite = game.assets.image("cat-good.png");
 				cat.behavior = Object.create(RandomBehavior);
 			} else if (type == EntityType.BadCat) {
-				cat.sprite = game.assets.image("cat.png");
+				cat.sprite = game.assets.image("cat-bad.png");
 				cat.behavior = Object.create(TrackingBehavior);
 			}
 			game.addEntity(cat);
@@ -212,10 +240,11 @@ $(document).ready(function() {
 			this.y += (game.mouseY - mouse.y) * dt;
 		};
 
-		addRandomCat(game, EntityType.BadCat);
-		addRandomCat(game, EntityType.BadCat);
-		addRandomCat(game, EntityType.BadCat);
-		addRandomCat(game, EntityType.BadCat);
+		var badCat = addRandomCat(game, EntityType.BadCat);
+		var goodCat = addRandomCat(game, EntityType.GoodCat);
+		goodCat.w = 120;
+		goodCat.h = 120;
+		badCat.behavior.target = goodCat;
 	
 		var FPS = 60;
 
