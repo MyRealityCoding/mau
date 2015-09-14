@@ -1,3 +1,3 @@
 ![mau-logo](logo.png)
 
-An audio game purely made with HTML5
+An audio game purely made with HTML5.
